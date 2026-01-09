@@ -3,7 +3,6 @@ require_once 'models/OperatoreModel.php';
 
 class AuthController {
     public static function login() {
-        session_start();
         $message = '';
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = $_POST['username'];
@@ -22,7 +21,6 @@ class AuthController {
     }
 
     public static function logout() {
-        session_start();
         session_destroy();
         header('Location: ?action=home');
         exit;

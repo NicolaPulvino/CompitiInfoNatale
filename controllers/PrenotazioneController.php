@@ -13,11 +13,19 @@ class PrenotazioneController {
             $cognome = $_POST['cognome'];
             $cf = $_POST['codiceFiscale'];
             $email = $_POST['email'];
-            if (validateDate($data) && validateTime($ora) && validateCf($cf) && validateEmail($email) && !PrenotazioneModel::checkDoubleBooking($data, $ora, $ufficio)) {
+            if (!validateDate($data)) {
+                $message = "Data non valida. Deve essere oggi o futura.";
+            } elseif (!validateTime($ora)) {
+                $message = "Ora non valida.";
+            } elseif (!validateCf($cf)) {
+                $message = "Codice fiscale non valido. Deve essere di 16 caratteri.";
+            } elseif (!validateEmail($email)) {
+                $message = "Email non valida.";
+            } elseif (PrenotazioneModel::checkDoubleBooking($data, $ora, $ufficio)) {
+                $message = "Prenotazione già esistente per questa data, ora e ufficio.";
+            } else {
                 $id = PrenotazioneModel::add($data, $ora, $ufficio, $nome, $cognome, $cf, $email);
                 $message = "Prenotazione effettuata. Codice: $id";
-            } else {
-                $message = "Errore nei dati o prenotazione già esistente.";
             }
         }
         include 'views/prenota.php';

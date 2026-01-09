@@ -6,7 +6,9 @@ function readCsv($file) {
     if (file_exists($file)) {
         $handle = fopen($file, 'r');
         while (($row = fgetcsv($handle, 0, ';')) !== false) {
-            $data[] = $row;
+            if (!empty($row) && $row[0][0] !== '#') {
+                $data[] = $row;
+            }
         }
         fclose($handle);
     }
@@ -58,7 +60,6 @@ function logOperation($idOperatore, $azione, $idPrenotazione) {
 }
 
 function isLoggedIn() {
-    session_start();
     return isset($_SESSION['user']);
 }
 
