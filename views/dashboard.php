@@ -1,21 +1,5 @@
-<?php
-session_start();
-require 'functions.php';
-requireLogin();
-$prenotazioni = readCsv(PRENOTAZIONI_CSV);
-$filterData = $_GET['data'] ?? '';
-$filterUfficio = $_GET['ufficio'] ?? '';
-$filterStato = $_GET['stato'] ?? '';
-$filtered = array_filter($prenotazioni, function($p) use ($filterData, $filterUfficio, $filterStato) {
-    return (!$filterData || $p[1] == $filterData) &&
-           (!$filterUfficio || $p[3] == $filterUfficio) &&
-           (!$filterStato || $p[8] == $filterStato);
-});
-usort($filtered, function($a, $b) {
-    return strtotime($a[1] . ' ' . $a[2]) <=> strtotime($b[1] . ' ' . $b[2]);
-});
-?>
 <form method="get">
+    <input type="hidden" name="action" value="dashboard">
     Data: <input type="date" name="data" value="<?php echo htmlspecialchars($filterData); ?>"><br>
     Ufficio: <select name="ufficio">
         <option></option>
@@ -45,12 +29,12 @@ usort($filtered, function($a, $b) {
         <td><?php echo htmlspecialchars($p[8]); ?></td>
         <td>
             <?php if ($p[8] == 'INSERITA'): ?>
-            <form method="post" action="azione.php" style="display:inline;">
+            <form method="post" action="?action=azione" style="display:inline;">
                 <input type="hidden" name="id" value="<?php echo $p[0]; ?>">
                 <input type="hidden" name="azione" value="conferma">
                 <input type="submit" value="Conferma">
             </form>
-            <form method="post" action="azione.php" style="display:inline;">
+            <form method="post" action="?action=azione" style="display:inline;">
                 <input type="hidden" name="id" value="<?php echo $p[0]; ?>">
                 <input type="hidden" name="azione" value="annulla">
                 <input type="submit" value="Annulla">
@@ -60,4 +44,4 @@ usort($filtered, function($a, $b) {
     </tr>
     <?php endforeach; ?>
 </table>
-<a href="export.php">Esporta</a> | <a href="logout.php">Logout</a>
+<a href="?action=export">Esporta</a> | <a href="?action=logout">Logout</a>
